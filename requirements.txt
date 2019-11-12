@@ -1,0 +1,12 @@
+autopep8
+flake8
+pylint
+ipdb
+ipython
+jupyter
+numpy
+seaborn
+scipy
+matplotlib
+tensorflow==1.6.0
+sklearn
