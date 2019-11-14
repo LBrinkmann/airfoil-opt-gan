@@ -38,6 +38,7 @@ if __name__ == "__main__":
     batch_size = 32
     symm_axis = None
     bounds = (0., 1.)
+    plotting = args.plotting
 
     # Read dataset
     data_fname = 'airfoil_interp.npy'
