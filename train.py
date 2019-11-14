@@ -7,11 +7,9 @@ Author(s): Wei Chen (wchen459@umd.edu)
 
 import argparse
 import numpy as np
-import matplotlib.pyplot as plt
 from importlib import import_module
 
 from gan import GAN
-from shape_plot import plot_samples, plot_grid
 from manifold_evaluation.diversity import ci_rdiv
 from manifold_evaluation.likelihood import ci_mll
 from manifold_evaluation.consistency import ci_cons
@@ -27,6 +25,9 @@ if __name__ == "__main__":
                         help='startover, continue, or evaluate')
     parser.add_argument('--save_interval', type=int,
                         default=500, help='save interval')
+
+    parser.add_argument('--plotting', type=bool,
+                        default=False, help='make plots')
     args = parser.parse_args()
     assert args.mode in ['startover', 'continue', 'evaluate']
 
@@ -42,11 +43,14 @@ if __name__ == "__main__":
     data_fname = 'airfoil_interp.npy'
     X = np.load(data_fname)
 
-    print('Plotting training samples ...')
-    samples = X[np.random.choice(range(X.shape[0]), size=36)]
+    if plotting:
+        from shape_plot import plot_samples
+        print('Plotting training samples ...')
+        samples = X[np.random.choice(range(X.shape[0]), size=36)]
 #    plot_samples(None, samples, scatter=True, symm_axis=symm_axis, s=1.5, alpha=.7, c='k', fname='samples')
-    plot_samples(None, samples, scale=1.0, scatter=False,
-                 symm_axis=symm_axis, lw=1.2, alpha=.7, c='k', fname='samples')
+
+        plot_samples(None, samples, scale=1.0, scatter=False,
+                     symm_axis=symm_axis, lw=1.2, alpha=.7, c='k', fname='samples')
 
     # Split training and test data
     test_split = 0.8
@@ -70,9 +74,11 @@ if __name__ == "__main__":
     else:
         model.restore()
 
-    print('Plotting synthesized shapes ...')
-    plot_grid(5, gen_func=model.synthesize, d=latent_dim, bounds=bounds, scale=1.0, scatter=False, symm_axis=symm_axis,
-              alpha=.7, lw=1.2, c='k', fname='gan/synthesized')
+    if plotting:
+        from shape_plot import plot_grid
+        print('Plotting synthesized shapes ...')
+        plot_grid(5, gen_func=model.synthesize, d=latent_dim, bounds=bounds, scale=1.0, scatter=False, symm_axis=symm_axis,
+                  alpha=.7, lw=1.2, c='k', fname='gan/synthesized')
 
     n_runs = 10
 
@@ -113,10 +119,13 @@ if __name__ == "__main__":
 
     results_file.close()
 
-    plt.figure()
-    plt.errorbar(np.arange(latent_dim)+1, rdiv_means, yerr=rdiv_err_k)
-    plt.xlabel('Latent Dimensions')
-    plt.ylabel('Relative diversity')
-    plt.savefig('rdiv.svg', dpi=600)
+    if plotting:
+        import matplotlib.pyplot as plt
+
+        plt.figure()
+        plt.errorbar(np.arange(latent_dim)+1, rdiv_means, yerr=rdiv_err_k)
+        plt.xlabel('Latent Dimensions')
+        plt.ylabel('Relative diversity')
+        plt.savefig('rdiv.svg', dpi=600)
 
     print 'All completed :)'
