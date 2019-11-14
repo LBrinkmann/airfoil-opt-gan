@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM nvidia/cuda:9.0-devel-ubuntu16.04
 
 RUN apt-get -y update
 
@@ -9,20 +9,30 @@ RUN apt-get -y update && apt-get install -qyy \
    pkg-config rsync openssh-client libhdf5-dev libatlas3-base libjpeg8 \
    libtiff5 libfreetype6-dev
 
+
 RUN apt-get -y update && apt-get install -qyy \
    -o APT::Install-Recommends=false -o APT::Install-Suggests=false \
-   python2 python2-dev python2-venv
+   python python-dev virtualenv
 
-RUN python2 -m venv /appenv
+RUN python --version
+
+RUN virtualenv -p python /appenv
+
 RUN . /appenv/bin/activate; pip --no-cache-dir install -U pip
 
 COPY requirements.txt /app/
 WORKDIR /app
 RUN . /appenv/bin/activate; pip --no-cache-dir install -r requirements.txt
-RUN . /appenv/bin/activate; pip --no-cache-dir install -U setuptools
+
+# TEMP
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get -y update && apt-get install -qyy \
+   -o APT::Install-Recommends=false -o APT::Install-Suggests=false \
+   python-tk
+
+# END TEMP
 
 COPY . /app
-RUN . /appenv/bin/activate; pip --no-cache-dir install --no-dependencies .
 
 COPY docker/entry.sh /start.sh
 

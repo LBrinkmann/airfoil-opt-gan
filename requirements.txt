@@ -2,6 +2,6 @@ numpy
 seaborn
 scipy
 matplotlib
-tensorflow==1.6.0
+tensorflow-gpu==1.6.0
 sklearn
-python-tk
+# python-tk
