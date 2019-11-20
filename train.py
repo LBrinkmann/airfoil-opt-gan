@@ -26,8 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_interval', type=int,
                         default=500, help='save interval')
 
-    parser.add_argument('--plotting', type=bool,
-                        default=False, help='make plots')
+    parser.add_argument('--plotting', action='store_true')
     args = parser.parse_args()
     assert args.mode in ['startover', 'continue', 'evaluate']
 
@@ -106,27 +105,27 @@ if __name__ == "__main__":
     print(results_mesg_4)
     results_file.write('%s\n' % results_mesg_4)
 
-    rdiv_means = []
-    rdiv_errs = []
-    for k in range(latent_dim):
-        rdiv_mean_k, rdiv_err_k = ci_rdiv(
-            100, X, model.synthesize, latent_dim, k, plot_bounds)
-        rdiv_means.append(rdiv_mean_k)
-        rdiv_errs.append(rdiv_err_k)
-        results_mesg_k = 'Relative diversity for latent dimension %d: %.3f +/- %.3f' % (
-            k, rdiv_mean_k, rdiv_err_k)
-        print(results_mesg_k)
-        results_file.write('%s\n' % results_mesg_k)
+    # rdiv_means = []
+    # rdiv_errs = []
+    # for k in range(latent_dim):
+    #     rdiv_mean_k, rdiv_err_k = ci_rdiv(
+    #         100, X, model.synthesize, latent_dim, k, plot_bounds)
+    #     rdiv_means.append(rdiv_mean_k)
+    #     rdiv_errs.append(rdiv_err_k)
+    #     results_mesg_k = 'Relative diversity for latent dimension %d: %.3f +/- %.3f' % (
+    #         k, rdiv_mean_k, rdiv_err_k)
+    #     print(results_mesg_k)
+    #     results_file.write('%s\n' % results_mesg_k)
 
     results_file.close()
 
-    if plotting:
-        import matplotlib.pyplot as plt
+    # if plotting:
+    #     import matplotlib.pyplot as plt
 
-        plt.figure()
-        plt.errorbar(np.arange(latent_dim)+1, rdiv_means, yerr=rdiv_err_k)
-        plt.xlabel('Latent Dimensions')
-        plt.ylabel('Relative diversity')
-        plt.savefig('rdiv.svg', dpi=600)
+    #     plt.figure()
+    #     plt.errorbar(np.arange(latent_dim)+1, rdiv_means, yerr=rdiv_err_k)
+    #     plt.xlabel('Latent Dimensions')
+    #     plt.ylabel('Relative diversity')
+    #     plt.savefig('rdiv.svg', dpi=600)
 
     print 'All completed :)'
