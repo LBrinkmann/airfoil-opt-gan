@@ -33,7 +33,7 @@ class GAN(object):
     def generator(self, c, z, reuse=tf.AUTO_REUSE, training=True):
 
         depth_cpw = 32*8
-        dim_cpw = (self.bezier_degree+1)/8
+        dim_cpw = (self.bezier_degree+1)//8
         kernel_size = (4,3)
 #        noise_std = 0.01
 
@@ -342,8 +342,8 @@ class GAN(object):
                             scale=.95, scatter=True, s=1, alpha=.7, fname='gan/synthesized')
 
 
-    def save(self, dir='trained_gan'):
-        save_path = saver.save(self.sess, f'{dir}/model')
+    def save(self, folder='trained_gan'):
+        save_path = saver.save(self.sess, folder + '/model')
         settings = {
             latend_dim: self.latent_dim,
             noise_dim: self.noise_dim,
@@ -351,24 +351,24 @@ class GAN(object):
             bezier_degree: self.bezier_degree,
             bounds: self.bounds
         }
-        with open(f'{dir}/settings.json', w) as f:
+        with open(folder + '/settings.json', w) as f:
             json.dump(settings, f)
         print(('Model saved in path: %s' % save_path))
 
 
 
     @classmethod
-    def restore(cls, dir='trained_gan'):
+    def restore(cls, folder='trained_gan'):
 
-        with open(f'{dir}/settings.json', r) as f:
+        with open(folder + '/settings.json', r) as f:
             settings = json.load(f)
          
         model = cls(**settings)
 
         model.sess = tf.Session()
         # Load meta graph and restore weights
-        saver = tf.train.import_meta_graph(f'{dir}/model.meta')
-        saver.restore(model.sess, tf.train.latest_checkpoint(f'{dir}/'))
+        saver = tf.train.import_meta_graph(folder + '/model.meta')
+        saver.restore(model.sess, tf.train.latest_checkpoint(folder + '/'))
 
         # Access and create placeholders variables
         graph = tf.get_default_graph()

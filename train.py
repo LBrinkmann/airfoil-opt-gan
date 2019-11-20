@@ -6,6 +6,7 @@ Author(s): Wei Chen (wchen459@umd.edu)
 """
 
 import argparse
+import os
 import numpy as np
 from importlib import import_module
 
@@ -19,6 +20,8 @@ from utils import ElapsedTimer
 MODEL_FOLDER = os.environ.get('MODEL_FOLDER', 'trained_gan')
 DATA_FOLDER = os.environ.get('DATA_FOLDER')
 LOG_FOLDER = os.environ.get('LOG_FOLDER')
+
+print(MODEL_FOLDER)
 
 
 if __name__ == "__main__":
@@ -78,9 +81,9 @@ if __name__ == "__main__":
         elapsed_time = timer.elapsed_time()
         runtime_mesg = 'Wall clock time for training: %s' % elapsed_time
         print(runtime_mesg)
-        runtime_file = open('gan/runtime.txt', 'w')
-        runtime_file.write('%s\n' % runtime_mesg)
-        runtime_file.close()
+        # runtime_file = open('gan/runtime.txt', 'w')
+        # runtime_file.write('%s\n' % runtime_mesg)
+        # runtime_file.close()
     else:
         GAN.restore()
 

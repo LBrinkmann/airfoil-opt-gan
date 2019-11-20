@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd /home/mpib/brinkmann/repros/airfoil-opt-gan
+
+SBATCH_JOB_NAME=test2
+
+singularity exec --nv /home/mpib/brinkmann/docker/tensorflow_1.6.0-gpu-py3.sif python train.py startover --name SLURM$SLURM_JOB_ID &> /home/mpib/brinkmann/data/logs/SLURM$SLURM_JOB_ID.log
