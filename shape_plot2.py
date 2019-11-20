@@ -9,6 +9,8 @@ from matplotlib import cm
 import numpy as np
 from utils import gen_grid
 
+from simulation import evaluate
+
 
 def plot_shape(xys, z1, z2, ax, scale, scatter, symm_axis, **kwargs):
 #    mx = max([y for (x, y) in m])
@@ -61,7 +63,8 @@ def plot_samples(Z, X, P=None, W=None, scale=0.8, scatter=True, symm_axis=None, 
             w /= np.max(w)
             plot_shape(p, z[0], .3*z[1], ax, scale, scatter, symm_axis, c='g', s=10*w, marker='P', alpha=.5)
             plot_shape(p, z[0], .3*z[1], ax, scale, False, symm_axis, lw=.5, alpha=.5, c='g')
-        plot_shape(X[i], z[0], .3*z[1], ax, scale, scatter, symm_axis, **kwargs)
+        for j in range(X.shape[1]):
+            plot_shape(X[i,j], z[0], .3*z[1], ax, scale, scatter, symm_axis, **kwargs)
         if annotate:
             label = '{0}'.format(i+1)
             plt.annotate(label, xy = (z[0], z[1]), size=10)
@@ -84,9 +87,21 @@ def plot_synthesized(Z, gen_func, d=2, scale=.8, scatter=True, symm_axis=None, f
         latent = Z
     else:
         latent = np.random.normal(scale=0.5, size=(Z.shape[0], d))
+    
+    noise_sample = 10
+    noise_dim = 10
 
-    X = gen_func(latent)
+    latent = np.repeat(latent, repeats=noise_sample, axis=0)
+
+    noise = np.random.normal(scale=0.5, size=(latent.shape[0], noise_dim))
+    X = gen_func(latent, noise=noise)
+
+    print(X.shape)
+    eval = np.array([evaluate(X[i], return_CL_CD=True) for i in range(X.shape[0])])
+
+
     P = W = None
+    X = X.reshape((Z.shape[0], noise_dim, -1, 2))
     
     plot_samples(Z, X, P, W, scale, scatter, symm_axis, fname=fname, **kwargs)
 
@@ -112,3 +127,4 @@ def plot_grid(points_per_axis, gen_func, d=2, bounds=(0.0, 1.0), scale=.8, scatt
             Z[:, :3] = np.hstack((Zxy, Zz)) # random after 3rd dimension
             plot_synthesized(Z, gen_func, 2, scale, scatter, symm_axis, '%s_%.2f' % (fname, zgrid[i]), **kwargs)
         
+

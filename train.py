@@ -75,10 +75,12 @@ if __name__ == "__main__":
         model.restore()
 
     if plotting:
-        from shape_plot import plot_grid
+        from shape_plot2 import plot_grid
         print('Plotting synthesized shapes ...')
         plot_grid(5, gen_func=model.synthesize, d=latent_dim, bounds=bounds, scale=1.0, scatter=False, symm_axis=symm_axis,
-                  alpha=.7, lw=1.2, c='k', fname='gan/synthesized')
+                  alpha=.7, lw=0.2, fname='gan/synthesized')
+
+
 
     n_runs = 10
 
@@ -105,17 +107,17 @@ if __name__ == "__main__":
     print(results_mesg_4)
     results_file.write('%s\n' % results_mesg_4)
 
-    # rdiv_means = []
-    # rdiv_errs = []
-    # for k in range(latent_dim):
-    #     rdiv_mean_k, rdiv_err_k = ci_rdiv(
-    #         100, X, model.synthesize, latent_dim, k, plot_bounds)
-    #     rdiv_means.append(rdiv_mean_k)
-    #     rdiv_errs.append(rdiv_err_k)
-    #     results_mesg_k = 'Relative diversity for latent dimension %d: %.3f +/- %.3f' % (
-    #         k, rdiv_mean_k, rdiv_err_k)
-    #     print(results_mesg_k)
-    #     results_file.write('%s\n' % results_mesg_k)
+    rdiv_means = []
+    rdiv_errs = []
+    for k in range(latent_dim):
+        rdiv_mean_k, rdiv_err_k = ci_rdiv(
+            100, X, model.synthesize, latent_dim, k, plot_bounds)
+        rdiv_means.append(rdiv_mean_k)
+        rdiv_errs.append(rdiv_err_k)
+        results_mesg_k = 'Relative diversity for latent dimension %d: %.3f +/- %.3f' % (
+            k, rdiv_mean_k, rdiv_err_k)
+        print(results_mesg_k)
+        results_file.write('%s\n' % results_mesg_k)
 
     results_file.close()
 
