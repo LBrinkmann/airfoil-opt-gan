@@ -9,7 +9,7 @@ Reference:
 Author(s): Wei Chen (wchen459@umd.edu)
 """
 
-from __future__ import division
+
 import time
 import argparse
 import numpy as np
@@ -37,20 +37,20 @@ def optimize(bounds, n_eval, run_id):
         else:
             perfs_normalized = normalize(perfs)
             gp_model.fit(np.array(xs), np.array(perfs_normalized))
-            print('Length scale = {}'.format(gp_model.kernel_.length_scale))
+            print(('Length scale = {}'.format(gp_model.kernel_.length_scale)))
             previous_optimum = np.max(perfs_normalized)
 #            x = sample_next_point(d, neg_expected_improvement, gp_model, previous_optimum, bounds, n_restarts=100)
             x = sample_next_point(d, neg_expected_improvement, gp_model, previous_optimum, bounds, random_search=100000)
         airfoil = synthesize(x, U_upper, U_lower, p, n_points)
         perf = evaluate(airfoil)
-        print('NURBS-BO %d-%d: CL/CD %.2f' % (run_id, i+1, perf))
+        print(('NURBS-BO %d-%d: CL/CD %.2f' % (run_id, i+1, perf)))
         xs.append(x)
         perfs.append(perf)
         opt_perfs.append(np.max(perfs)) # Best performance so far
     
     opt_x = xs[np.argmax(perfs)]
     opt_airfoil = synthesize(opt_x, U_upper, U_lower, p, n_points)
-    print('Optimal CL/CD: {}'.format(opt_perfs[-1]))
+    print(('Optimal CL/CD: {}'.format(opt_perfs[-1])))
     
     return opt_airfoil, opt_perfs
 
@@ -119,4 +119,4 @@ if __name__ == "__main__":
     plt.savefig('opt_results/nurbs_bo/opt_airfoil.svg')
     plt.close()
 
-    print 'NURBS-BO completed :)'
+    print('NURBS-BO completed :)')

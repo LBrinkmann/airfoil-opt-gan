@@ -177,7 +177,7 @@ class GAN(object):
 
             return d, q
 
-    def train(self, X_train, train_steps=2000, batch_size=256, save_interval=0):
+    def train(self, X_train, train_steps=2000, batch_size=256, save_interval=0, model_path=None):
 
         X_train = preprocess(X_train)
 
@@ -287,7 +287,7 @@ class GAN(object):
 
             if np.any(np.isnan(X_fake)):
                 ind = np.any(np.isnan(X_fake), axis=(1,2,3))
-                print(self.sess.run(ub, feed_dict={self.c: y_latent, self.z: noise})[ind])
+                print((self.sess.run(ub, feed_dict={self.c: y_latent, self.z: noise})[ind]))
                 assert not np.any(np.isnan(X_fake))
 
             if sigma > 0:
@@ -317,9 +317,8 @@ class GAN(object):
             if save_interval>0 and (t+1)%save_interval==0:
 
                 # Save the variables to disk.
-                save_path = saver.save(self.sess, 'trained_gan/model')
-                print('Model saved in path: %s' % save_path)
-
+                self.save(model_path)
+                
                 # TODO
                 if False:
                     print('Plotting results ...')
@@ -342,22 +341,45 @@ class GAN(object):
                     plot_grid(5, gen_func=self.synthesize, d=self.latent_dim, bounds=self.bounds,
                             scale=.95, scatter=True, s=1, alpha=.7, fname='gan/synthesized')
 
-    def restore(self):
 
-        self.sess = tf.Session()
+    def save(self, dir='trained_gan'):
+        save_path = saver.save(self.sess, f'{dir}/model')
+        settings = {
+            latend_dim: self.latent_dim,
+            noise_dim: self.noise_dim,
+            X_shape: self.X_shape,
+            bezier_degree: self.bezier_degree,
+            bounds: self.bounds
+        }
+        with open(f'{dir}/settings.json', w) as f:
+            json.dump(settings, f)
+        print(('Model saved in path: %s' % save_path))
+
+
+
+    @classmethod
+    def restore(cls, dir='trained_gan'):
+
+        with open(f'{dir}/settings.json', r) as f:
+            settings = json.load(f)
+         
+        model = cls(**settings)
+
+        model.sess = tf.Session()
         # Load meta graph and restore weights
-        saver = tf.train.import_meta_graph('trained_gan/model.meta')
-        saver.restore(self.sess, tf.train.latest_checkpoint('trained_gan/'))
+        saver = tf.train.import_meta_graph(f'{dir}/model.meta')
+        saver.restore(model.sess, tf.train.latest_checkpoint(f'{dir}/'))
 
         # Access and create placeholders variables
         graph = tf.get_default_graph()
-        self.x = graph.get_tensor_by_name('real_image:0')
-        self.c = graph.get_tensor_by_name('latent_code:0')
-        self.z = graph.get_tensor_by_name('noise:0')
-        self.x_fake_test = graph.get_tensor_by_name('Generator_1/fake_image:0')
-        self.cp = graph.get_tensor_by_name('Generator_1/control_point:0')
-        self.w = graph.get_tensor_by_name('Generator_1/weight:0')
-        self.q_test = graph.get_tensor_by_name('Discriminator_2/predicted_latent:0')
+        model.x = graph.get_tensor_by_name('real_image:0')
+        model.c = graph.get_tensor_by_name('latent_code:0')
+        model.z = graph.get_tensor_by_name('noise:0')
+        model.x_fake_test = graph.get_tensor_by_name('Generator_1/fake_image:0')
+        model.cp = graph.get_tensor_by_name('Generator_1/control_point:0')
+        model.w = graph.get_tensor_by_name('Generator_1/weight:0')
+        model.q_test = graph.get_tensor_by_name('Discriminator_2/predicted_latent:0')
+        return model
 
     def synthesize(self, latent, noise=None):
         if isinstance(latent, int):

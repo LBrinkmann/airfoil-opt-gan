@@ -1,4 +1,4 @@
-from __future__ import division
+
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize

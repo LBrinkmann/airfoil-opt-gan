@@ -15,7 +15,7 @@ def fit_single_curve(Q, n_control_points, p, upper=True):
     P, U = wc_least_squares_curve(Q, Wq, D, I, Wd, n, p)
     W = np.ones(n+1)
     err = eval_error(Q, P, W, U, p)
-    print 'error:', err
+    print('error:', err)
     return P, U
 
 def nurbs_airfoil(n_control_points, p, coordinates):

@@ -11,7 +11,7 @@ Reference(s):
     AIAA Journal, 56(5), 2003-2017.
 """
 
-from __future__ import division
+
 import time
 import argparse
 import numpy as np
@@ -40,7 +40,7 @@ def optimize(x0, syn_func, perturb_type, perturb, n_eval, run_id):
         best_inds.append(best_individual)
         best_perfs.append(best_perf)
         opt_perfs += [np.max(best_perfs)] * population_size # Best performance so far
-        print('NURBS-GA %d-%d: fittest %.2f' % (run_id, i+1, best_perf))
+        print(('NURBS-GA %d-%d: fittest %.2f' % (run_id, i+1, best_perf)))
         # No need to create next generation for the last generation
         if i < n_eval/population_size-1:
             next_generation = create_children(breeders, n_children)
@@ -51,7 +51,7 @@ def optimize(x0, syn_func, perturb_type, perturb, n_eval, run_id):
     
     opt_x = best_inds[np.argmax(best_perfs)]
     opt_airfoil = syn_func(opt_x)
-    print('Optimal CL/CD: {}'.format(opt_perfs[-1]))
+    print(('Optimal CL/CD: {}'.format(opt_perfs[-1])))
     
     return opt_airfoil, opt_perfs
     
@@ -119,4 +119,4 @@ if __name__ == "__main__":
     plt.savefig('opt_results/nurbs_ga/opt_airfoil.svg')
     plt.close()
 
-    print 'NURBS-GA completed :)'
+    print('NURBS-GA completed :)')

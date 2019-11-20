@@ -11,7 +11,7 @@ r+1 : number of data points
 
 
 import numpy as np
-from bspline import *
+from .bspline import *
 
 
 def wc_least_squares_curve(Q, Wq, D, I, Wd, n, p):

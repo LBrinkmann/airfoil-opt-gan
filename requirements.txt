@@ -5,3 +5,4 @@ matplotlib
 tensorflow==1.6.0
 sklearn
 # python-tk
+pexpect

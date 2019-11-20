@@ -16,6 +16,10 @@ from manifold_evaluation.consistency import ci_cons
 from manifold_evaluation.smoothness import ci_rsmth
 from utils import ElapsedTimer
 
+MODEL_FOLDER = os.environ.get('MODEL_FOLDER', 'trained_gan')
+DATA_FOLDER = os.environ.get('DATA_FOLDER')
+LOG_FOLDER = os.environ.get('LOG_FOLDER')
+
 
 if __name__ == "__main__":
 
@@ -27,6 +31,7 @@ if __name__ == "__main__":
                         default=500, help='save interval')
 
     parser.add_argument('--plotting', action='store_true')
+    parser.add_argument('--name', type=str)
     args = parser.parse_args()
     assert args.mode in ['startover', 'continue', 'evaluate']
 
@@ -34,6 +39,7 @@ if __name__ == "__main__":
     noise_dim = 10
     bezier_degree = 31
     train_steps = 20000
+    train_steps = 200
     batch_size = 32
     symm_axis = None
     bounds = (0., 1.)
@@ -46,8 +52,7 @@ if __name__ == "__main__":
     if plotting:
         from shape_plot import plot_samples
         print('Plotting training samples ...')
-        samples = X[np.random.choice(range(X.shape[0]), size=36)]
-#    plot_samples(None, samples, scatter=True, symm_axis=symm_axis, s=1.5, alpha=.7, c='k', fname='samples')
+        samples = X[np.random.choice(list(range(X.shape[0])), size=36)]
 
         plot_samples(None, samples, scale=1.0, scatter=False,
                      symm_axis=symm_axis, lw=1.2, alpha=.7, c='k', fname='samples')
@@ -63,8 +68,13 @@ if __name__ == "__main__":
     model = GAN(latent_dim, noise_dim, X_train.shape[1], bezier_degree, bounds)
     if args.mode == 'startover':
         timer = ElapsedTimer()
+
+        model_path = MODEL_FOLDER + '/' + args.name
+        if not os.path.exists(model_path):
+            os.makedirs(model_path)
+
         model.train(X_train, batch_size=batch_size,
-                    train_steps=train_steps, save_interval=args.save_interval)
+                    train_steps=train_steps, save_interval=args.save_interval, model_path=model_path)
         elapsed_time = timer.elapsed_time()
         runtime_mesg = 'Wall clock time for training: %s' % elapsed_time
         print(runtime_mesg)
@@ -72,14 +82,13 @@ if __name__ == "__main__":
         runtime_file.write('%s\n' % runtime_mesg)
         runtime_file.close()
     else:
-        model.restore()
+        GAN.restore()
 
     if plotting:
         from shape_plot2 import plot_grid
         print('Plotting synthesized shapes ...')
         plot_grid(5, gen_func=model.synthesize, d=latent_dim, bounds=bounds, scale=1.0, scatter=False, symm_axis=symm_axis,
                   alpha=.7, lw=0.2, fname='gan/synthesized')
-
 
 
     n_runs = 10
@@ -130,4 +139,4 @@ if __name__ == "__main__":
     #     plt.ylabel('Relative diversity')
     #     plt.savefig('rdiv.svg', dpi=600)
 
-    print 'All completed :)'
+    print('All completed :)')

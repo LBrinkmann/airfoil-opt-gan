@@ -7,7 +7,7 @@
 
 
 # Import libraries
-from __future__ import division
+
 from math import sqrt, tan, pi
 import numpy as np
 

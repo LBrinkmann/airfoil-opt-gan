@@ -1,8 +1,8 @@
-from __future__ import division
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import fmin_l_bfgs_b, fmin_slsqp, differential_evolution
-from synthesis import sythesize
+from .synthesis import sythesize
 
 
 def parsec_airfoil(airfoil):

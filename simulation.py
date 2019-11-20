@@ -1,5 +1,5 @@
 #import os
-import ConfigParser
+import configparser
 import pexpect
 #import subprocess as sp
 import gc
@@ -110,7 +110,7 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
 def evaluate(airfoil, return_CL_CD=False):
 
     # Airfoil operating conditions
-    Config = ConfigParser.ConfigParser()
+    Config = configparser.ConfigParser()
     Config.read("op_conditions.ini")
     reynolds = float(Config.get('OperatingConditions', 'Reynolds'))
     mach = float(Config.get('OperatingConditions', 'Mach'))
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     airfoils = np.load('airfoil_interp.npy')
     airfoil = airfoils[np.random.choice(airfoils.shape[0])]
 
-    Config = ConfigParser.ConfigParser()
+    Config = configparser.ConfigParser()
     Config.read("op_conditions.ini")
     reynolds = float(Config.get('OperatingConditions', 'Reynolds'))
     mach = float(Config.get('OperatingConditions', 'Mach'))
@@ -142,4 +142,4 @@ if __name__ == "__main__":
     n_iter = int(Config.get('OperatingConditions', 'N_iter'))
 
     CL, CD = compute_coeff(airfoil, reynolds, mach, alpha, n_iter)
-    print(CL, CD, CL/CD)
+    print((CL, CD, CL/CD))

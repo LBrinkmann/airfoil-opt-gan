@@ -6,7 +6,7 @@ constrained on the running time
 Author(s): Wei Chen (wchen459@umd.edu)
 """
 
-from __future__ import division
+
 import time
 import argparse
 import numpy as np
@@ -50,7 +50,7 @@ def optimize(latent_dim, bounds, n_eval, run_id):
             perf_normalized = normalize(perfs)
             gp_model.fit(np.array(zp), np.array(perf_normalized))
             length_scale = gp_model.kernel_.length_scale
-            print('Length scale = {}'.format(length_scale))
+            print(('Length scale = {}'.format(length_scale)))
             previous_optimum = perf_normalized[opt_idx]
             if np.all(np.array(perfs[-5:])==-1): # in case getting stuck in infeasible region
                 previous_point = opt_z
@@ -70,11 +70,11 @@ def optimize(latent_dim, bounds, n_eval, run_id):
         opt_z = zp[opt_idx]
         opt_perf = perfs[opt_idx]
         opt_perfs.append(opt_perf) # Best performance so far
-        print('PCA-BO {}-{}: z {} CL/CD {:.2f} best-so-far {:.2f}'.format(run_id, i+1, z, perf, opt_perf))
+        print(('PCA-BO {}-{}: z {} CL/CD {:.2f} best-so-far {:.2f}'.format(run_id, i+1, z, perf, opt_perf)))
         
     opt_z = opt_z.reshape(1,-1)
     opt_airfoil = synthesize(opt_z, pca)
-    print('Optimal: z {} CL/CD {}'.format(opt_z, opt_perfs[-1]))
+    print(('Optimal: z {} CL/CD {}'.format(opt_z, opt_perfs[-1])))
     
     return opt_airfoil, opt_perfs
 
@@ -181,4 +181,4 @@ if __name__ == "__main__":
     plt.savefig('opt_results/pca_bo/opt_airfoil.svg')
     plt.close()
 
-    print 'PCA-BO completed :)'
+    print('PCA-BO completed :)')

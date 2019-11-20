@@ -19,7 +19,7 @@ def optimize_kde(X):
     grid = GridSearchCV(KernelDensity(), params, n_jobs=8, cv=5, verbose=1)
     grid.fit(X)
 
-    print("best bandwidth: {0}".format(grid.best_estimator_.bandwidth))
+    print(("best bandwidth: {0}".format(grid.best_estimator_.bandwidth)))
 
     # use the best estimator to compute the kernel density estimate
     kde = grid.best_estimator_
@@ -76,7 +76,7 @@ def visualize(X):
     # Reconstruction error
     X_rec = pca.inverse_transform(F)
     err = mean_squared_error(X, X_rec)
-    print 'Reconstruct error: ', err
+    print('Reconstruct error: ', err)
 
     # 3D Plot
     fig3d = plt.figure()

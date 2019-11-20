@@ -6,7 +6,7 @@ constrained on the running time
 Author(s): Wei Chen (wchen459@umd.edu)
 """
 
-from __future__ import division
+
 import time
 import argparse
 import numpy as np
@@ -45,7 +45,7 @@ def optimize_latent(syn_func, dim, bounds, n_eval, run_id):
             perf_normalized = normalize(perfs)
             gp_model.fit(np.array(zp), np.array(perf_normalized))
             length_scale = gp_model.kernel_.length_scale
-            print('Length scale = {}'.format(length_scale))
+            print(('Length scale = {}'.format(length_scale)))
             previous_optimum = perf_normalized[opt_idx]
             if np.all(np.array(perfs[-5:])==-1): # in case getting stuck in infeasible region
                 previous_point = opt_z
@@ -65,11 +65,11 @@ def optimize_latent(syn_func, dim, bounds, n_eval, run_id):
         opt_z = zp[opt_idx]
         opt_perf = perfs[opt_idx]
         opt_perfs.append(opt_perf) # Best performance so far
-        print('GAN-2-GA {}-{}: CL/CD {:.2f} best-so-far {:.2f}'.format(run_id, i+1, perf, opt_perf))
+        print(('GAN-2-GA {}-{}: CL/CD {:.2f} best-so-far {:.2f}'.format(run_id, i+1, perf, opt_perf)))
         
     opt_z = opt_z.reshape(1,-1)
     opt_airfoil = syn_func(opt_z)
-    print('Optimal CL/CD {}'.format(opt_perfs[-1]))
+    print(('Optimal CL/CD {}'.format(opt_perfs[-1])))
         
     return opt_airfoil, opt_perfs, opt_z
 
@@ -90,7 +90,7 @@ def optimize_overall(x0, syn_func, perturb_type, perturb, n_eval, run_id):
         best_inds.append(best_individual)
         best_perfs.append(best_perf)
         opt_perfs += [np.max(best_perfs)] * population_size # Best performance so far
-        print('GAN-2-GA %d-%d: fittest %.2f' % (run_id, i+1, best_perf))
+        print(('GAN-2-GA %d-%d: fittest %.2f' % (run_id, i+1, best_perf)))
         # No need to create next generation for the last generation
         if i < n_eval/population_size-1:
             next_generation = create_children(breeders, n_children)
@@ -101,7 +101,7 @@ def optimize_overall(x0, syn_func, perturb_type, perturb, n_eval, run_id):
     
     opt_x = best_inds[np.argmax(best_perfs)]
     opt_airfoil = syn_func(opt_x)
-    print('Optimal CL/CD: {}'.format(opt_perfs[-1]))
+    print(('Optimal CL/CD: {}'.format(opt_perfs[-1])))
     
     return opt_airfoil, opt_perfs
 
@@ -180,4 +180,4 @@ if __name__ == "__main__":
     plt.savefig('opt_results/gan_2_ga/opt_airfoil.svg')
     plt.close()
 
-    print 'GAN-2-GA completed :)'
+    print('GAN-2-GA completed :)')

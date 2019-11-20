@@ -32,7 +32,7 @@ def select_best(population, n_best, syn_func):
     return ranked_population[:n_best], np.max(performance)
 
 def select_random(population, n_random):
-    ind = range(population.shape[0])
+    ind = list(range(population.shape[0]))
     return population[np.random.choice(ind, size=n_random)]
 
 def select(population, n_best, n_random, syn_func):

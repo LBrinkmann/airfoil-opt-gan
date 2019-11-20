@@ -20,18 +20,18 @@ def plot_shape(xys, z1, z2, ax, scale, scatter, symm_axis, **kwargs):
         if 'c' not in kwargs:
             kwargs['c'] = cm.rainbow(np.linspace(0,1,xys.shape[0]))
 #        ax.plot( *zip(*[(x * xscl + z1, y * yscl + z2) for (x, y) in xys]), lw=.2, c='b')
-        ax.scatter( *zip(*[(x * xscl + z1, y * yscl + z2) for (x, y) in xys]), edgecolors='none', **kwargs)
+        ax.scatter( *list(zip(*[(x * xscl + z1, y * yscl + z2) for (x, y) in xys])), edgecolors='none', **kwargs)
     else:
-        ax.plot( *zip(*[(x * xscl + z1, y * yscl + z2) for (x, y) in xys]), **kwargs)
+        ax.plot( *list(zip(*[(x * xscl + z1, y * yscl + z2) for (x, y) in xys])), **kwargs)
         
     if symm_axis == 'y':
 #        ax.plot( *zip(*[(-x * xscl + z1, y * yscl + z2) for (x, y) in xys]), lw=.2, c='b')
-        plt.fill_betweenx( *zip(*[(y * yscl + z2, -x * xscl + z1, x * xscl + z1)
-                          for (x, y) in xys]), color='gray', alpha=.2)
+        plt.fill_betweenx( *list(zip(*[(y * yscl + z2, -x * xscl + z1, x * xscl + z1)
+                          for (x, y) in xys])), color='gray', alpha=.2)
     elif symm_axis == 'x':
 #        ax.plot( *zip(*[(x * xscl + z1, -y * yscl + z2) for (x, y) in xys]), lw=.2, c='b')
-        plt.fill_between( *zip(*[(x * xscl + z1, -y * yscl + z2, y * yscl + z2)
-                          for (x, y) in xys]), color='gray', alpha=.2)
+        plt.fill_between( *list(zip(*[(x * xscl + z1, -y * yscl + z2, y * yscl + z2)
+                          for (x, y) in xys])), color='gray', alpha=.2)
 
 def plot_samples(Z, X, P=None, W=None, scale=0.8, scatter=True, symm_axis=None, annotate=False, fname=None, **kwargs):
     
