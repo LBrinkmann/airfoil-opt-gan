@@ -3,6 +3,7 @@ tmp/*
 *.pyc
 */*.pyc
 *.svg
+*.txt
 
 .*
 !.gitignore

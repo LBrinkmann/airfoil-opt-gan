@@ -1,4 +1,0 @@
-Mean log likelihood: -848.9 +/- 47.7
-Relative diversity: 1.006 +/- 0.009
-Consistency: 0.968 +/- 0.002
-Smoothness: 0.941 +/- 0.000
