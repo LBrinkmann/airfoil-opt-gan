@@ -6,6 +6,7 @@ Author(s): Wei Chen (wchen459@umd.edu)
 
 import numpy as np
 import tensorflow as tf
+import json
 
 
 
@@ -27,6 +28,7 @@ class GAN(object):
         self.noise_dim = noise_dim
 
         self.X_shape = (n_points, 2, 1)
+        self.n_points = n_points
         self.bezier_degree = bezier_degree
         self.bounds = bounds
 
@@ -258,7 +260,7 @@ class GAN(object):
         merged_summary_op = tf.summary.merge_all()
 
         # Add ops to save and restore all the variables.
-        saver = tf.train.Saver()
+        self.saver = tf.train.Saver()
 
         # Start training
         self.sess = tf.Session()
@@ -341,17 +343,18 @@ class GAN(object):
                     plot_grid(5, gen_func=self.synthesize, d=self.latent_dim, bounds=self.bounds,
                             scale=.95, scatter=True, s=1, alpha=.7, fname='gan/synthesized')
 
+        self.save(model_path)
 
     def save(self, folder='trained_gan'):
-        save_path = saver.save(self.sess, folder + '/model')
+        save_path = self.saver.save(self.sess, folder + '/model')
         settings = {
-            latend_dim: self.latent_dim,
-            noise_dim: self.noise_dim,
-            X_shape: self.X_shape,
-            bezier_degree: self.bezier_degree,
-            bounds: self.bounds
+            "latent_dim": self.latent_dim,
+            "noise_dim": self.noise_dim,
+            "n_points": self.n_points,
+            "bezier_degree": self.bezier_degree,
+            "bounds": self.bounds
         }
-        with open(folder + '/settings.json', w) as f:
+        with open(folder + '/settings.json', 'w') as f:
             json.dump(settings, f)
         print(('Model saved in path: %s' % save_path))
 
@@ -360,9 +363,9 @@ class GAN(object):
     @classmethod
     def restore(cls, folder='trained_gan'):
 
-        with open(folder + '/settings.json', r) as f:
+        with open(folder + '/settings.json', 'r') as f:
             settings = json.load(f)
-         
+        
         model = cls(**settings)
 
         model.sess = tf.Session()
@@ -379,6 +382,7 @@ class GAN(object):
         model.cp = graph.get_tensor_by_name('Generator_1/control_point:0')
         model.w = graph.get_tensor_by_name('Generator_1/weight:0')
         model.q_test = graph.get_tensor_by_name('Discriminator_2/predicted_latent:0')
+
         return model
 
     def synthesize(self, latent, noise=None):

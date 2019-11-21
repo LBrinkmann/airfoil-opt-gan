@@ -8,6 +8,7 @@ Author(s): Wei Chen (wchen459@umd.edu)
 import argparse
 import os
 import numpy as np
+import yaml
 from importlib import import_module
 
 from gan import GAN
@@ -20,33 +21,10 @@ from utils import ElapsedTimer
 MODEL_FOLDER = os.environ.get('MODEL_FOLDER', 'trained_gan')
 DATA_FOLDER = os.environ.get('DATA_FOLDER')
 LOG_FOLDER = os.environ.get('LOG_FOLDER')
+EXPERIMENT_FOLDER = os.environ.get('EXPERIMENT_FOLDER', 'experiments')
 
-print(MODEL_FOLDER)
 
-
-if __name__ == "__main__":
-
-    # Arguments
-    parser = argparse.ArgumentParser(description='Train')
-    parser.add_argument('mode', type=str, default='startover',
-                        help='startover, continue, or evaluate')
-    parser.add_argument('--save_interval', type=int,
-                        default=500, help='save interval')
-
-    parser.add_argument('--plotting', action='store_true')
-    parser.add_argument('--name', type=str)
-    args = parser.parse_args()
-    assert args.mode in ['startover', 'continue', 'evaluate']
-
-    latent_dim = 3
-    noise_dim = 10
-    bezier_degree = 31
-    train_steps = 20000
-    train_steps = 200
-    batch_size = 32
-    symm_axis = None
-    bounds = (0., 1.)
-    plotting = args.plotting
+def run(*, name, mode, save_interval, latent_dim, noise_dim, bezier_degree, train_steps, batch_size, symm_axis, bounds, plotting):
 
     # Read dataset
     data_fname = 'airfoil_interp.npy'
@@ -67,17 +45,18 @@ if __name__ == "__main__":
     X_train = X[:split]
     X_test = X[split:]
 
+    model_path = MODEL_FOLDER + '/' + name
+    if not os.path.exists(model_path):
+        os.makedirs(model_path)
+
     # Train
-    model = GAN(latent_dim, noise_dim, X_train.shape[1], bezier_degree, bounds)
-    if args.mode == 'startover':
+   
+    if mode == 'startover':
+        model = GAN(latent_dim, noise_dim, X_train.shape[1], bezier_degree, bounds)
         timer = ElapsedTimer()
 
-        model_path = MODEL_FOLDER + '/' + args.name
-        if not os.path.exists(model_path):
-            os.makedirs(model_path)
-
         model.train(X_train, batch_size=batch_size,
-                    train_steps=train_steps, save_interval=args.save_interval, model_path=model_path)
+                    train_steps=train_steps, save_interval=save_interval, model_path=model_path)
         elapsed_time = timer.elapsed_time()
         runtime_mesg = 'Wall clock time for training: %s' % elapsed_time
         print(runtime_mesg)
@@ -85,7 +64,7 @@ if __name__ == "__main__":
         # runtime_file.write('%s\n' % runtime_mesg)
         # runtime_file.close()
     else:
-        GAN.restore()
+        model = GAN.restore(model_path)
 
     if plotting:
         from shape_plot2 import plot_grid
@@ -143,3 +122,17 @@ if __name__ == "__main__":
     #     plt.savefig('rdiv.svg', dpi=600)
 
     print('All completed :)')
+
+
+if __name__ == "__main__":
+
+    # Arguments
+    parser = argparse.ArgumentParser(description='Train')
+    parser.add_argument('name', type=str)
+    args = parser.parse_args()
+
+
+    with open(EXPERIMENT_FOLDER + '/' + args.name + '.yml', 'r') as f:
+        exp_settings =yaml.safe_load(f)
+
+    run(name=args.name, **exp_settings)
