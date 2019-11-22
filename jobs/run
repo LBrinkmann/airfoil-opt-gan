@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /home/mpib/brinkmann/repros/airfoil-opt-gan
+
+echo $SLURM_JOB_NAME
+echo $SLURM_JOB_ID
+
+singularity exec --nv /home/mpib/brinkmann/docker/images/mctest_tf1.sif python run.py $SLURM_JOB_NAME &> /home/mpib/brinkmann/data/logs/${SLURM_JOB_NAME}.${SLURM_JOB_ID}.log
+

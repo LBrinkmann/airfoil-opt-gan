@@ -7,6 +7,7 @@ import numpy as np
 from utils import safe_remove
 
 
+
 def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
 
     gc.collect()
@@ -20,13 +21,25 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
         # This is the "empty input file: 'tmp/airfoil.log'" warning in other approaches
         child = pexpect.spawn('xfoil')
         timeout = 10
+        child.expect('XFOIL   c> ', timeout)
+        child.sendline('')
+        child.expect('XFOIL   c> ', timeout)
+        child.sendline('PLOP')
+        child.expect('.* c> ', timeout)
+        child.sendline('G F')
+        child.expect('.* c> ', timeout)
+        child.sendline('')
 
         child.expect('XFOIL   c> ', timeout)
         child.sendline('load tmp/airfoil.dat')
+
+        # print(str(child))
         child.expect('Enter airfoil name   s> ', timeout)
         child.sendline('af')
+        # print(str(child))
         child.expect('XFOIL   c> ', timeout)
         child.sendline('OPER')
+        # print(str(child))
         child.expect('.OPERi   c> ', timeout)
         child.sendline('VISC {}'.format(reynolds))
         child.expect('.OPERv   c> ', timeout)
@@ -99,8 +112,11 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
     except Exception as ex:
         #        print(ex)
         print('XFoil error!')
+        print(child.before.decode())
         CL = -np.inf
         CD = np.inf
+    else:
+        print('XFoil success!')
 
     safe_remove(':00.bl')
 
@@ -121,7 +137,7 @@ def evaluate(airfoil, return_CL_CD=False):
     perf = CL/CD
 
     if np.isnan(perf) or perf > 300:
-        perf = -1
+        perf = np.nan
     if return_CL_CD:
         return perf, CL, CD
     else:
