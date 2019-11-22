@@ -6,7 +6,7 @@ Author(s): Wei Chen (wchen459@umd.edu)
 
 import numpy as np
 import tensorflow as tf
-
+import json
 
 
 def preprocess(X):
@@ -309,6 +309,16 @@ class GAN(object):
 
             summary_writer.add_summary(summary_str, t+1)
 
+            summary = {
+                'step': t+1,
+                'discriminator_real': dlr,
+                'discriminator_fake': dlf,
+                'discriminator_q': qdl,
+                'generator_fake': gl,
+                'generator_req': rl,
+                'generator_q': qgl
+            }
+
             # Show messages
             log_mesg = "%d: [D] real %f fake %f q %f" % (t+1, dlr, dlf, qdl)
             log_mesg = "%s  [G] fake %f reg %f q %f" % (log_mesg, gl, rl, qgl)
@@ -318,7 +328,7 @@ class GAN(object):
 
                 # Save the variables to disk.
                 self.save(model_path)
-                
+
                 # TODO
                 if False:
                     print('Plotting results ...')
@@ -342,14 +352,16 @@ class GAN(object):
                             scale=.95, scatter=True, s=1, alpha=.7, fname='gan/synthesized')
 
 
+
+
     def save(self, folder='trained_gan'):
         save_path = saver.save(self.sess, folder + '/model')
         settings = {
-            latend_dim: self.latent_dim,
-            noise_dim: self.noise_dim,
-            X_shape: self.X_shape,
-            bezier_degree: self.bezier_degree,
-            bounds: self.bounds
+            "latend_dim": self.latent_dim,
+            "noise_dim": self.noise_dim,
+            "X_shape": self.X_shape,
+            "bezier_degree": self.bezier_degree,
+            "bounds": self.bounds
         }
         with open(folder + '/settings.json', w) as f:
             json.dump(settings, f)
@@ -362,7 +374,7 @@ class GAN(object):
 
         with open(folder + '/settings.json', r) as f:
             settings = json.load(f)
-         
+
         model = cls(**settings)
 
         model.sess = tf.Session()
