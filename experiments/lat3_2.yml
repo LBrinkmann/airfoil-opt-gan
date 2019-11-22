@@ -11,7 +11,7 @@ train:
   mode: evaluate
   plotting: True
 sample:
-  latend_bounds: [0,1]
+  latend_bounds: [0.5,1]
   points_per_dim: 10
   noise_sample: 10
 performance: {}

@@ -260,7 +260,7 @@ class GAN(object):
         merged_summary_op = tf.summary.merge_all()
 
         # Add ops to save and restore all the variables.
-        self.saver = tf.train.Saver()
+        self.saver = tf.train.Saver(save_relative_paths=False)
 
         # Start training
         self.sess = tf.Session()
