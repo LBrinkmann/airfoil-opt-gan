@@ -11,11 +11,12 @@ train:
   mode: evaluate
   plotting: True
 sample:
-  latend_bounds: [0.5,1]
+  latend_bounds: [0,1]
   points_per_dim: 10
   noise_sample: 10
 performance: {}
 plot:
   plot_args: 
     alpha: .5
-    lw: 0.2
+    lw: 0.5
+    c: 'black'

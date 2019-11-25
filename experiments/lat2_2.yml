@@ -1,10 +1,21 @@
-latent_dim: 2
-noise_dim: 10
-bezier_degree: 31
-train_steps: 20000
-batch_size: 32
-symm_axis: None
-bounds: [0., 1.]
-plotting: False
-save_interval: 500
-mode: startover
+train:
+  latent_dim: 2
+  noise_dim: 10
+  bezier_degree: 31
+  train_steps: 20000
+  batch_size: 32
+  symm_axis: None
+  bounds: [0., 1.]
+  plotting: False
+  save_interval: 500
+  mode: startover
+sample:
+  latend_bounds: [0,1]
+  points_per_dim: 10
+  noise_sample: 10
+performance: {}
+plot:
+  plot_args: 
+    alpha: .5
+    lw: 0.5
+    c: 'black'
