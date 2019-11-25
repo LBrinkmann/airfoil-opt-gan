@@ -37,7 +37,7 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
         child.expect('Enter airfoil name   s> ', timeout)
         child.sendline('af')
         # print(str(child))
-        child.500000expect('XFOIL   c> ', timeout)
+        child.expect('XFOIL   c> ', timeout)
         child.sendline('OPER')
         # print(str(child))
         child.expect('.OPERi   c> ', timeout)
