@@ -121,6 +121,52 @@ class GAN(object):
 
             return dp, cp, w, ub, db
 
+    @staticmethod
+    def bezier_to_x_tf(cp, w, ub, db, bezier_degree):
+        num_control_points = bezier_degree + 1
+        lbs = tf.tile(ub, [1, 1, num_control_points]) # batch_size x n_data_points x n_control_points
+        pw1 = tf.range(0, num_control_points, dtype=tf.float32)
+        pw1 = tf.reshape(pw1, [1, 1, -1]) # 1 x 1 x n_control_points
+        pw2 = tf.reverse(pw1, axis=[-1])
+        lbs = tf.add(tf.multiply(pw1, tf.log(lbs+EPSILON)), tf.multiply(pw2, tf.log(1-lbs+EPSILON))) # batch_size x n_data_points x n_control_points
+        lc = tf.add(tf.lgamma(pw1+1), tf.lgamma(pw2+1))
+        lc = tf.subtract(tf.lgamma(tf.cast(num_control_points, dtype=tf.float32)), lc) # 1 x 1 x n_control_points
+        lbs = tf.add(lbs, lc) # batch_size x n_data_points x n_control_points
+        bs = tf.exp(lbs)
+        # Compute data points
+        cp_w = tf.multiply(cp, w)
+        dp = tf.matmul(bs, cp_w) # batch_size x n_data_points x 2
+        bs_w = tf.matmul(bs, w) # batch_size x n_data_points x 1
+        dp = tf.div(dp, bs_w) # batch_size x n_data_points x 2
+        dp = tf.expand_dims(dp, axis=-1, name='fake_image')
+        return dp
+
+    @staticmethod
+    def bezier_to_x_np(cp, w, ub, db, bezier_degree):
+        from scipy.special import loggamma
+
+        num_control_points = bezier_degree + 1
+        lbs = np.tile(ub, [1, 1, num_control_points]) # batch_size x n_data_points x n_control_points
+        pw1 = np.arange(0, num_control_points, dtype=np.float32)
+        pw1 = np.reshape(pw1, [1, 1, -1]) # 1 x 1 x n_control_points
+        pw2 = np.reverse(pw1, axis=[-1])
+        lbs = np.add(np.multiply(pw1, np.log(lbs+EPSILON)), np.multiply(pw2, np.log(1-lbs+EPSILON))) # batch_size x n_data_points x n_control_points
+        lc = np.add(loggamma(pw1+1), loggamma(pw2+1))
+        lc = np.subtract(loggamma(np.cast(num_control_points, dtype=np.float32)), lc) # 1 x 1 x n_control_points
+        lbs = np.add(lbs, lc) # batch_size x n_data_points x n_control_points
+        bs = np.exp(lbs)
+        # Compute data points
+        cp_w = np.multiply(cp, w)
+        dp = np.matmul(bs, cp_w) # batch_size x n_data_points x 2
+        bs_w = np.matmul(bs, w) # batch_size x n_data_points x 1
+        dp = np.div(dp, bs_w) # batch_size x n_data_points x 2
+        dp = np.expand_dims(dp, axis=-1)
+        return dp
+
+
+
+
+
     def discriminator(self, x, reuse=tf.AUTO_REUSE, training=True):
 
         depth = 64
@@ -320,7 +366,7 @@ class GAN(object):
 
                 # Save the variables to disk.
                 self.save(model_path)
-                
+
                 # TODO
                 if False:
                     print('Plotting results ...')
@@ -365,7 +411,7 @@ class GAN(object):
 
         with open(folder + '/settings.json', 'r') as f:
             settings = json.load(f)
-        
+
         model = cls(**settings)
 
         model.sess = tf.Session()

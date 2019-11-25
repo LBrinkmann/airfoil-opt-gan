@@ -1,11 +1,14 @@
-#import os
+import os
 import configparser
 import pexpect
 #import subprocess as sp
 import gc
 import numpy as np
-from utils import safe_remove
 
+
+def safe_remove(filename):
+    if os.path.exists(filename):
+        os.remove(filename)
 
 
 def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
@@ -21,6 +24,10 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
         # This is the "empty input file: 'tmp/airfoil.log'" warning in other approaches
         child = pexpect.spawn('xfoil')
         timeout = 10
+
+        ################
+        #  turn off gui
+
         # child.expect('XFOIL   c> ', timeout)
         # child.sendline('')
         # child.expect('XFOIL   c> ', timeout)
@@ -29,6 +36,9 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
         # child.sendline('G F')
         # child.expect('.* c> ', timeout)
         # child.sendline('')
+
+        #  end turn off gui
+        ################
 
         child.expect('XFOIL   c> ', timeout)
         child.sendline('load tmp/airfoil.dat')
