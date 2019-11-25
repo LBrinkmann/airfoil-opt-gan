@@ -10,7 +10,7 @@ RUN apt-get -y update && apt-get install -qyy \
    -o APT::Install-Recommends=false -o APT::Install-Suggests=false \
    xfoil
 
-COPY xserver_config.txt /tmp
+COPY xserver.config /tmp
 
 
 ENV DEBIAN_FRONTEND noninteractive
