@@ -1,6 +1,6 @@
 meta:
   project: calculate airfoil performance
-  command: python performance.py {jobpath}
+  command: DISPLAY=:1 python performance.py {jobpath}
   machine: gpu
 job:
   parameter:
