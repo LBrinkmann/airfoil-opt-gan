@@ -3,8 +3,9 @@ numpy
 seaborn
 scipy
 matplotlib
-tensorflow-gpu==1.15.0
+tensorflow==1.14.0
+# tensorflow-gpu=1.15.0
 sklearn
 pexpect
 pyyaml
-https://github.com/dkollective/djx/tarball/mlflow
+# https://github.com/dkollective/djx/tarball/mlflow

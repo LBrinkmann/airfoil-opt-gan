@@ -24,6 +24,16 @@ def load_artifact(model_name, obj_name, group_name='data'):
         return pickle.load(f)
 
 
+def load_artifacts(model_name, group_name='data'):
+    model_artifact_path = DATA_FOLDER + '/' + model_name + '/' + group_name
+    files = os.listdir(model_artifact_path)
+    a = []
+    for fname in files:
+        with open(os.path.join(model_artifact_path, fname), "rb") as f:
+            a.append(pickle.load(f))
+    return a
+
+
 def get_artifact_path(model_name, obj_name, group_name='data'):
     model_artifact_path = DATA_FOLDER + '/' + model_name + '/' + group_name
     ensure_dir(model_artifact_path)

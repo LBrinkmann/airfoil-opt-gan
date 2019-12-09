@@ -1,0 +1,11 @@
+meta:
+  project: calculate airfoil performance
+  command: python performance.py {jobpath}
+  machine: gpu
+job:
+  parameter:
+    sample_name: lat2_2.l2_n3_v1
+    noise_idx: 0
+experiment:
+  grid:
+    - parameter.noise_idx: [0,1,2]

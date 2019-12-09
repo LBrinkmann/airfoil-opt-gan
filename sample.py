@@ -67,18 +67,22 @@ def run(model_name, sample_name, latend_bounds, points_per_dim, noise_sample):
     grid_df = pd.concat(
         [
             pd.DataFrame(design_idx, columns=['design_idx']),
-            pd.DataFrame(latend_grid, columns=[f'dim_{d}_value' for d in latend_grid.shape[1]]),
-            pd.DataFrame(grid_idx, columns=[f'dim_{d}_idx' for d in grid_idx.shape[1]]),
-            pd.DataFrame(noise_idxs, columns=['noise_idx']),
+            pd.DataFrame(latend_grid, columns=[f'dim_{d}_value' for d in range(latend_grid.shape[1])]),
+            pd.DataFrame(grid_idx, columns=[f'dim_{d}_idx' for d in range(grid_idx.shape[1])]),
+            pd.DataFrame(noise_idx, columns=['noise_idx']),
         ],
         axis=1
     )
+
+    grid_df['points_per_dim'] = points_per_dim
+    grid_df['noise_sample'] = noise_sample
+    grid_df['latent_dim'] = model.latent_dim
+
     store_artifact(grid_df, sample_name, 'grid_df')
     print(grid_df)
 
 
 if __name__ == '__main__':
-    print(sys.argv[1])
     with open(sys.argv[1], 'r') as f:
         job = yaml.load(f.read())
     run(**job['parameter'])

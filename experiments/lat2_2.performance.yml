@@ -1,16 +1,3 @@
-meta:
-  project: calculate airfoil performance
-  name: 
-  source:
-    source_type: PYTHON_MODULE
-    repository: __REPO_FROM_ENTRY
-    commit: __COMMIT_FROM_ENTRY
-    entry: performance.run
-  machine: local
-job:
-  parameter:
-    sample_name: lat2_2.l2_n3
-    noise_idx: 0
-experiment:
-  grid:
-    - parameter.noise_idx: [0,1]
+parameter:
+  sample_name: lat2_2.l2_n3_v1
+  noise_idx: 0
