@@ -1,3 +1,8 @@
 parameter:
   sample_name: lat2_2.l2_n3_v1
   noise_idx: 0
+  sim_args:
+    reynolds: 1.8e6
+    mach: 0.01
+    alpha: 0.0
+    n_iter: 200

@@ -7,12 +7,10 @@ import numpy as np
 from utils import safe_remove
 
 
-
 def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
-
     gc.collect()
-    safe_remove('/tmp/airfoil.log')
-    fname = '/tmp/airfoil.dat'
+    safe_remove('./airfoil.log')
+    fname = './airfoil.dat'
     with open(fname, 'wb') as f:
         np.savetxt(f, airfoil)
 
@@ -31,7 +29,7 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
         # child.sendline('')
 
         child.expect('XFOIL   c> ', timeout)
-        child.sendline('load /tmp/airfoil.dat')
+        child.sendline('load ./airfoil.dat')
 
         # print(str(child))
         child.expect('Enter airfoil name   s> ', timeout)
@@ -50,7 +48,7 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
         child.sendline('PACC')
         child.expect(
             'Enter  polar save filename  OR  <return> for no file   s> ', timeout)
-        child.sendline('/tmp/airfoil.log')
+        child.sendline('./airfoil.log')
         child.expect(
             'Enter  polar dump filename  OR  <return> for no file   s> ', timeout)
         child.sendline()
@@ -100,7 +98,7 @@ def compute_coeff(airfoil, reynolds=500000, mach=0, alpha=3, n_iter=200):
 #                                  '\n' +
 #                                  'quit\n')
 
-        res = np.loadtxt('/tmp/airfoil.log', skiprows=12)
+        res = np.loadtxt('./airfoil.log', skiprows=12)
 
         if len(res) in [7, 9]:
             CL = res[1]
