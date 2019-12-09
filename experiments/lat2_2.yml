@@ -9,13 +9,25 @@ train:
   plotting: False
   save_interval: 500
   mode: startover
-sample:
-  latend_bounds: [0,1]
-  points_per_dim: 10
-  noise_sample: 10
-performance: {}
-plot:
-  plot_args: 
-    alpha: .5
-    lw: 0.5
-    c: 'black'
+s50_100:
+  sample:
+    latend_bounds: [0,1]
+    points_per_dim: 2
+    noise_sample: 3
+  performance: {}
+  plot:
+    plot_args: 
+      alpha: .5
+      lw: 0.5
+      c: 'black'
+s2_3:
+  sample:
+    latend_bounds: [0,1]
+    points_per_dim: 2
+    noise_sample: 3
+  performance: {}
+  plot:
+    plot_args: 
+      alpha: .5
+      lw: 0.5
+      c: 'black'

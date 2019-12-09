@@ -24,6 +24,10 @@ def run(*, model_name, plot_args):
 
     grid_shape = designs.shape[:-2]
 
+    metrics[metrics==-np.inf] = np.nan
+    metrics[metrics==np.inf] = np.nan
+
+
     if len(grid_shape) == 4:
         dim_labels = [
             ['{:.2f}'.format(d) for d in latend_grid[:,0,0,1]],
@@ -31,41 +35,44 @@ def run(*, model_name, plot_args):
             ['dim 3: {:.2f}'.format(d) for d in latend_grid[0,0,:,2]],
         ]
 
-        metrics[metrics==-np.inf] = np.nan
-        metrics[metrics==np.inf] = np.nan
-
         x_lim = [np.min(designs[:,:,:,:,:,0]), np.max(designs[:,:,:,:,:,0])]
         y_lim = [np.min(designs[:,:,:,:,:,1]), np.max(designs[:,:,:,:,:,1])]
-        perf_lim = [np.nanmin(metrics[:,:,:,:,0]), np.nanmax(metrics[:,:,:,:,0])]
 
-        perf_lim = [0, 120]
+        median_metric = np.nanmean(metrics[:,:,:,:,0], axis=-1)
+        maxm = np.nanmax(median_metric)
+        minm = np.nanmin(median_metric)
+        norm_metric = (median_metric - minm) / (maxm - minm)
 
+        # perf_lim = [0, 120]
 
-        subplot_args = {'design_x_lim': x_lim, 'design_y_lim': y_lim, 'perf_lim': perf_lim}
+        subplot_args = {'design_x_lim': x_lim, 'design_y_lim': y_lim}
 
-        plot_3Dgrid(designs, metrics, dim_labels, 'designs', model_name, plot_args, subplot_args)
+        plot_3Dgrid(designs, norm_metric, dim_labels, 'designs', model_name, plot_args, subplot_args)
 
-    # else:
-    #     dim_labels = [
-    #         ['dim 1: {:.2f}'.format(d) for d in latend_grid[:,0,0]],
-    #         ['dim 2: {:.2f}'.format(d) for d in latend_grid[0,:,1]],
-    #     ]     
-    #     plot_2Dgrid(designs, metrics, dim_labels, 'designs', model_name, plot_args)
+    else:
+        x_lim = [np.min(designs[:,:,:,:,0]), np.max(designs[:,:,:,:,0])]
+        y_lim = [np.min(designs[:,:,:,:,1]), np.max(designs[:,:,:,:,1])]
+
+        median_metric = np.nanmedian(metrics[:,:,:,0], axis=-1)
+        maxm = np.nanmax(median_metric)
+        minm = np.nanmin(median_metric)
+        norm_metric = (median_metric - minm) / (maxm - minm)
+
+        subplot_args = {'design_x_lim': x_lim, 'design_y_lim': y_lim}
+
+        dim_labels = [
+            ['dim 1: {:.2f}'.format(d) for d in latend_grid[:,0,0]],
+            ['dim 2: {:.2f}'.format(d) for d in latend_grid[0,:,1]],
+        ]     
+        plot_2Dgrid(designs, norm_metric, dim_labels, 'designs', model_name, plot_args, subplot_args)
 
 
 def plot_designs(designs, metrics, ax, plot_args, subplot_args):
     for i in range(designs.shape[0]):
         ax.plot(designs[i,:,0], designs[i,:,1], **plot_args)
 
-    perf = np.nanmedian(metrics[:,0])
-    if perf != np.nan:
-        cmap = cm.get_cmap('viridis')
-        perf_lim = subplot_args['perf_lim']
-        norm_perf = (perf - perf_lim[0]) / (perf_lim[1] - perf_lim[0])
-        color = cmap(norm_perf)
-    else:
-        color = 'white'
-    print(color, perf, norm_perf, perf_lim)
+    cmap = cm.get_cmap('viridis')
+    color = cmap(metrics)
     ax.set_xlim(*subplot_args['design_x_lim'])
     ax.set_ylim(*subplot_args['design_y_lim'])
    
@@ -84,6 +91,9 @@ def plot_2Dgrid(designs, metrics, dim_labels, plot_name, model_name, plot_args, 
     grid_shape = designs.shape[:-2]
 
     ax = fig.subplots(grid_shape[0], grid_shape[1])
+
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.0, hspace=0.0)
+
 
     for i in range(grid_shape[0]):
         for j in range(grid_shape[1]):
@@ -110,7 +120,7 @@ def plot_2Dgrid(designs, metrics, dim_labels, plot_name, model_name, plot_args, 
     #     top=False,
     #     labelbottom=False
     # )
-    plt.tight_layout()
+    # plt.tight_layout()
 
     plot_path = get_artifact_path(model_name, plot_name + '.png', group_name='plots')
 

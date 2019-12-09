@@ -1,9 +1,10 @@
+wheel
 numpy
 seaborn
 scipy
 matplotlib
-tensorflow==1.6.0
+tensorflow-gpu==1.15.0
 sklearn
-# python-tk
 pexpect
 pyyaml
+https://github.com/dkollective/djx/tarball/mlflow
