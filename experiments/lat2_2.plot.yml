@@ -1,6 +1,6 @@
 parameter:
-  sample_name: lat2_2.l2_n3_v1
+  sample_name: lat2_2.l2_n3_v2
   plot_args: 
-    alpha: .5
-    lw: 0.5
+    alpha: .2
+    lw: 0.3
     c: 'black'

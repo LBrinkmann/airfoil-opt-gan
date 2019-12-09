@@ -31,6 +31,9 @@ def run(*, sample_name, plot_args):
 
     metrics = ['performance', 'c_lift', 'c_drag']
 
+    # TODO: this is just a quick fix
+    metrics_df.loc[metrics_df['performance'] < -1000, 'performance'] = np.nan
+
     grid_val_agg = metrics_df.groupby(dim_idx_cols)[dim_val_cols].min()
     metrics_df_agg = metrics_df.groupby(dim_idx_cols)[metrics].mean()
     design_idx_agg = metrics_df.groupby(dim_idx_cols)['design_idx'].apply(list)
@@ -42,7 +45,6 @@ def run(*, sample_name, plot_args):
 
     x_lim = [np.min(designs[:,0]), np.max(designs[:,0])]
     y_lim = [np.min(designs[:,1]), np.max(designs[:,1])]
-
 
     subplot_args = {'design_x_lim': x_lim, 'design_y_lim': y_lim}
 
