@@ -1,6 +1,6 @@
 parameter:
   latend_bounds: [0,1]
-  points_per_dim: 2
-  noise_sample: 3
+  points_per_dim: 30
+  noise_sample: 50
   model_name: lat2_2
-  sample_name: lat2_2.l2_n3_v1
+  sample_name: lat2_2.l2_n3_v2
