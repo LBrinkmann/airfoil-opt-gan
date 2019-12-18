@@ -1,0 +1,16 @@
+
+#PBS -N 75ed2ed6-a33d-443b-84b1-a6e70ec7fd88
+#PBS -l walltime=4:0:0
+#PBS -l mem=5gb
+#PBS -j oe
+#PBS -o /home/mpib/brinkmann/data/logs/75ed2ed6-a33d-443b-84b1-a6e70ec7fd88.log
+#PBS -m n
+#PBS -d .
+
+module load python/3.7
+
+source ~/.env
+
+source .venv/bin/activate
+
+DISPLAY=:1 python performance.py /home/mpib/brinkmann/data/jobs/75ed2ed6-a33d-443b-84b1-a6e70ec7fd88.yml

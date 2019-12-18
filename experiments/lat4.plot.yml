@@ -1,0 +1,6 @@
+parameter:
+  sample_name: lat4.l10_n50
+  plot_args: 
+    alpha: .5
+    lw: 0.5
+    c: 'black'

@@ -3,4 +3,4 @@ parameter:
   points_per_dim: 30
   noise_sample: 50
   model_name: lat2_2
-  sample_name: lat2_2.l2_n3_v2
+  sample_name: lat2_2.l2_n3_v3
