@@ -1,0 +1,6 @@
+parameter:
+  latend_bounds: [0,1]
+  points_per_dim: 10
+  noise_sample: 50
+  model_name: lat4_8
+  sample_name: lat4.l10_n50

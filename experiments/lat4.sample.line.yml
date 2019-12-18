@@ -1,0 +1,8 @@
+parameter:
+  latend_bounds: [0,1]
+  points_per_dim: 3
+  line_points: 30
+  noise_sample: 50
+  model_name: lat4_8
+  sample_name: lat4.line1
+  mesh_type: line

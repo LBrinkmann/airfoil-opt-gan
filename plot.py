@@ -17,11 +17,22 @@ import numpy as np
 from store import load_artifact, store_artifact, get_artifact_path, load_artifacts
 
 
-def run(*, sample_name, plot_args):
+def run(*, sample_name, plot_args, noise_idx=None):
     designs = load_artifact(sample_name, 'designs')
     metrics_dfs = load_artifacts(sample_name, 'metrics_dfs')
 
+    print('Loaded dataframes')
+
     metrics_df = pd.concat(metrics_dfs)
+
+    print(metrics_df)
+
+    if noise_idx is not None:
+        metrics_df = metrics_df[metrics_df['noise_idx'] == noise_idx]
+
+    print(metrics_df)
+
+    print('Merged dataframes')
 
     points_per_dim = metrics_df['points_per_dim'].max()
     latent_dim = metrics_df['latent_dim'].max()
@@ -52,33 +63,19 @@ def run(*, sample_name, plot_args):
     if latent_dim == 2:
         x_dim = 0
         y_dim = 1
-        plot_2Dgrid(df, designs, points_per_dim, x_dim, y_dim, sample_name, 'designs', plot_args, subplot_args)
+        title = 'designs'
+        if noise_idx is not None:
+            title += f'_{noise_idx}'
+        plot_2Dgrid(df, designs, points_per_dim, x_dim, y_dim, sample_name, title, plot_args, subplot_args)
     else:
-        raise NotImplementedError()
-
-
-    # if len(grid_shape) == 4:
-    #     dim_labels = [
-    #         ['{:.2f}'.format(d) for d in latend_grid[:,0,0,1]],
-    #         ['dim 2: {:.2f}'.format(d) for d in latend_grid[0,:,0,0]],
-    #         ['dim 3: {:.2f}'.format(d) for d in latend_grid[0,0,:,2]],
-    #     ]
-
-    #     x_lim = [np.min(designs[:,:,:,:,:,0]), np.max(designs[:,:,:,:,:,0])]
-    #     y_lim = [np.min(designs[:,:,:,:,:,1]), np.max(designs[:,:,:,:,:,1])]
-
-    #     median_metric = np.nanmean(metrics[:,:,:,:,0], axis=-1)
-    #     maxm = np.nanmax(median_metric)
-    #     minm = np.nanmin(median_metric)
-    #     norm_metric = (median_metric - minm) / (maxm - minm)
-
-    #     # perf_lim = [0, 120]
-
-    #     subplot_args = {'design_x_lim': x_lim, 'design_y_lim': y_lim}
-
-    #     plot_3Dgrid(designs, norm_metric, dim_labels, 'designs', sample_name, plot_args, subplot_args)
-
-    # else:
+        x_dim = 2
+        y_dim = 3
+        add_dim_value = [f'dim_{i}_value'for i in range(0, latent_dim - 2)]
+        add_dim_idx = [f'dim_{i}_idx'for i in range(0, latent_dim - 2)]
+        for idx, dfg in df.groupby(add_dim_idx):
+            title = ' - '.join(f'{v:.2f}' for v in dfg.iloc[0][add_dim_value])
+            print(f'Plot {title}')
+            plot_2Dgrid(dfg, designs, points_per_dim, x_dim, y_dim, sample_name, title, plot_args, subplot_args)
 
 
 def plot_designs(designs, metric, ax, plot_args, subplot_args):
